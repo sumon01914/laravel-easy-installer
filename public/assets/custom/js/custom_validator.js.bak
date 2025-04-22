@@ -1,0 +1,163 @@
+
+var validator={
+    init:function(){
+		//check validation email configuration form.
+		 $('#emailSettingsForm').validate({
+		rules: {
+			mail_driver:{
+				required:true
+			},
+			mail_host:{
+				required:true
+			},
+			mail_port:{
+				required:true
+			},
+			mail_username:{
+				required:true
+			},
+			mail_password:{
+				required:true
+			},
+			mail_encryption:{
+				required:true
+			},
+		},
+		 messages: {
+            mail_driver: "Mail driver is required.",
+            mail_host: "Mail host is required.",
+            mail_port: "Mail port must be a number.",
+            mail_username: "Mail username is required.",
+            mail_password: "Mail password is required.",
+            mail_encryption: "Mail encryption is required."
+        },
+		 errorElement: 'span',
+			errorPlacement: function (error, element) {
+			  error.addClass('invalid-feedback');
+			  element.closest('.form-group').append(error);
+			},
+			highlight: function (element, errorClass, validClass) {
+			  $(element).addClass('is-invalid');
+			},
+			unhighlight: function (element, errorClass, validClass) {
+			  $(element).removeClass('is-invalid');
+			}
+	});
+	/**
+	 * Checks validation for the application settings form. If required fields are empty, it will display an error message.
+	 * @Created By Prioranjan Chowdhury <sumon.sustcse@gmail.com>
+	 * @Created On 01 March, 2025
+	 */
+	  $('#applicationSettingForm').validate({
+		rules: {
+			application_name:{
+				required:true
+			},
+			timeZone:{
+				required:true
+			},
+			AdminFullName:{
+				required:true
+			},
+			AdminEmailAddress:{
+				required:true,
+				email:true
+			},
+			adminUserName:{
+				required:true
+			},
+			Password:{
+				required:true
+			}
+		},
+		 messages: {
+            application_name: "Application name is required.",
+            timeZone: "Time Zone is required.",
+            AdminFullName: "Full name is required",
+            AdminEmailAddress: "Admin email address is required",
+			adminUserName: "Admin username is required",
+			Password: "Admin password is required"
+        },
+		 errorElement: 'span',
+			errorPlacement: function (error, element) {
+			  error.addClass('invalid-feedback');
+			  element.closest('.form-group').append(error);
+			},
+			highlight: function (element, errorClass, validClass) {
+			  $(element).addClass('is-invalid');
+			},
+			unhighlight: function (element, errorClass, validClass) {
+			  $(element).removeClass('is-invalid');
+			}
+	});
+	/**Check validation for database settings form.Tis function is checking the inout vakue whether are valid or not
+	**/
+	  $('#databaseSettingForm').validate({
+		rules: {
+			DatabaseHostName:{
+				required:true,
+				//validHost:true
+			},
+			PortNumber:{
+				required:true,
+				//validPort:true
+			},
+			DatabaseUserName:{
+				required:true,
+				//validPort:true
+			},
+			DatabaseName:{
+				required:true,
+				//validDatabaseName:true
+			},
+			SocketName:{
+				required:true,
+				//validSocket:true
+			},
+			
+		},
+		 messages: {
+            DatabaseHostName: "Database Host Name is required.",
+            PortNumber: "Yiu must provide a valid port number",
+            DatabaseUserName: "Database username must be required",
+            DatabaseName: "Database name is required",
+            SocketName: "Socket name is required"
+        },
+		 errorElement: 'span',
+			errorPlacement: function (error, element) {
+			  error.addClass('invalid-feedback');
+			  element.closest('.form-group').append(error);
+			},
+			highlight: function (element, errorClass, validClass) {
+			  $(element).addClass('is-invalid');
+			},
+			unhighlight: function (element, errorClass, validClass) {
+			  $(element).removeClass('is-invalid');
+			}
+	});
+	}
+}
+function callRoleBack(message){
+		$("#InstallationOnGoing").text("Installation Failed !!" + message);
+		$("#InstallationOnGoing").css('color', "red");
+		$("#workingOn").text("Rolling Back");
+		$("#workingOn").show();
+		$.ajax({
+			url: 'installer/roleBack',
+			type: 'POST',
+			data:{},
+			cache: false,
+			dataType: 'json',
+			processData: false,
+			contentType: false,
+			success: function (data) {
+				if(data.success == "success") {
+					$('#loading-box').modal('hide');
+					$('#installationFailed').show();
+					$('#error').text("Installation failed!!! Because of "+message+ " Contact with IT support.");
+				}
+			}
+		});
+
+		return message;
+	}

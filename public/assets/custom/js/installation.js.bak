@@ -1,0 +1,709 @@
+$(document).ready(function(){
+	 $.ajaxSetup({
+         headers: {
+             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+         }
+     });
+    validator.init();
+	/**
+	 * @Description - Handles the installation process when the install button is clicked.
+	 * @Author Prioranjan Chowdhury <sumon.sustcse@gmail.com>
+	 * @Created On 06th March, 2025
+	 * @Param void
+	 * @Return void
+	 */
+	$(document).on("click", "#install", function(){
+	    $('#loading-box').modal({
+            show: true,
+            backdrop: 'static',
+            keyboard: false
+        });
+        $("#workingOn").text("Creating database");
+        $("#workingOn").show();
+        var fd = new FormData(document.getElementById("installer-form"));
+		 $.ajax({
+            url: 'installer/CreatingDB',
+            type: 'POST',
+            data:fd,
+            cache: false,
+            dataType: 'json',
+            processData: false,
+            contentType: false,
+            success: function (data) {
+                if(data.success === "success") {
+                    $('.progress-bar').css('width', "10%");
+                    $('.progress-bar').text("10% Completed");
+                    CreateTable();
+
+                }
+                else if(data.success === "error") {
+                    $('#loading-box').modal('hide');
+                    let messages = data.message;
+					let errorMessage = "<ul>";
+                    $.each(messages, function (key, val) {
+						 errorMessage += "<li>" + val.message + "</li>";
+                    });
+						errorMessage += "</ul>";
+						$("#error-title").html("<i class='fas fa-exclamation-triangle'></i> Please fix your errors and update again:");
+						$("#error-details").html(errorMessage);
+						$("#error-message").fadeIn();
+						setTimeout(function () {
+							$("#error-message").fadeOut();
+						}, 5000);
+						
+					 $('#confirm-box').modal('hide');
+					 $('html, body').animate({ scrollTop: 0 }, 'slow'); // Scroll to top
+                }
+                else{
+                    callRoleBack(data.message);
+                }
+            }
+        });
+       
+    });
+	/**
+	 * @Description - Migrates the database if the installation process completes successfully via AJAX.
+	 * @Author Prioranjan Chowdhury <sumon.sustcse@gmail.com>
+	 * @Created On 06th March, 2025
+	 * @Param void
+	 * @Return void
+	 */
+	function CreateTable(){
+		$("#workingOn").text("Creating database tables");
+		var fd = new FormData(document.getElementById("installer-form"));
+		$.ajax({
+			url: 'installer/migrate',
+			type: 'POST',
+			data:fd,
+			cache: false,
+			dataType: 'json',
+			processData: false,
+			contentType: false,
+			success: function (data) {
+				if(data.success == "success") {
+					$('.progress-bar').css('width', "30%");
+					$('.progress-bar').text("30% Completed");
+					prepareTable();
+				}else{
+					callRoleBack(data.message);
+				}
+			}
+		});
+	}
+	/**
+	 * @Description - Runs all seed files after migration completes successfully.
+	 * @Author Prioranjan Chowdhury <sumon.sustcse@gmail.com>
+	 * @Created On 06th March, 2025
+	 * @Param void
+	 * @Return void
+	 */
+function prepareTable(){
+    $("#workingOn").text("Preparing Database");
+    $.ajax({
+    url: 'installer/seed', // Ensure it matches Laravel's route
+    type: 'POST',
+    headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') // CSRF Token
+    },
+    data: new FormData(document.getElementById("installer-form")),
+    cache: false,
+    processData: false,
+    contentType: false,
+    success: function (data) {
+        $('.progress-bar').css('width', "60%");
+		$('.progress-bar').text("60% Completed");
+		createUser();
+    },
+    error: function (xhr, status, error) {
+        console.error("Error:", status, error);
+        console.error("Response:", xhr.responseText);
+    }
+});
+}
+	/**
+	 * @Description - Creates an admin user based on the provided credentials via AJAX 
+	 * after database migration and running seed files.
+	 * @Author Prioranjan Chowdhury <sumon.sustcse@gmail.com>
+	 * @Created On 06th March, 2025
+	 * @Param void
+	 * @Return void
+	 */
+function createUser(){
+		$("#workingOn").text("Creating user account");
+		var fd = new FormData(document.getElementById("installer-form"));
+		$.ajax({
+			url: 'installer/createUser',
+			type: 'POST',
+			data:fd,
+			cache: false,
+			dataType: 'json',
+			processData: false,
+			  headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') // CSRF Token
+    },
+			contentType: false,
+			success: function (data) {
+				if(data.success == "success") {
+					$('.progress-bar').css('width', "100%");
+					$('.progress-bar').text("100% Completed");
+					window.location.href = data.url;
+				}else{
+					callRoleBack(data.message);
+				}
+			}
+		});
+	}
+	/**
+	 * @Description - If any migration, user creation, or seed file execution fails, 
+	 * this function will trigger a rollback to restore the system to its original state.
+	 * @Author Prioranjan Chowdhury <sumon.sustcse@gmail.com>
+	 * @Created On 06th March, 2025
+	 * @Param {string} message - Error message indicating what failed.
+	 * @Return {string} - Returns the error message.
+	 */
+	function callRoleBack(message){
+		$("#InstallationOnGoing").text("Installation Failed !!" + message);
+		$("#InstallationOnGoing").css('color', "red");
+		$("#workingOn").text("Rolling Back");
+		$("#workingOn").show();
+		$.ajax({
+			url: 'installer/roleBack',
+			type: 'POST',
+			data:{},
+			cache: false,
+			dataType: 'json',
+			processData: false,
+			contentType: false,
+			success: function (data) {
+				if(data.success == "success") {
+					$('#loading-box').modal('hide');
+					$('#installationFailed').show();
+						errorMessage="<ul><li>"+message+ " Contact with IT support."+"</li></ul>";
+						$("#error-title").html("<i class='fas fa-exclamation-triangle'></i> Please fix the errors:");
+						$("#error-details").html(errorMessage);
+						$("#error-message").fadeIn();
+						$('html, body').animate({ scrollTop: 0 }, 'slow'); // Scroll to top
+				}
+			}
+		});
+
+		return message;
+	}
+	/**
+	 * @Description - When clicking on "Check Email Configuration" under email settings, 
+	 * this function validates the email configuration setup. If the configuration is correct, 
+	 * it sends a test email to the provided address.
+	 * @Author Prioranjan Chowdhury <sumon.sustcse@gmail.com>
+	 * @Created On 06th March, 2025
+	 * @Param void
+	 * @Return void
+	 */
+   /* $("#check_email_config").on("click", function (e) {
+        e.preventDefault(); // Prevent form submission
+		//validate form
+        if (!$("#emailSettingsForm").valid()) {
+            return false; // Stop if validation fails
+        }
+
+        // If validation passes, proceed with AJAX request
+        var e_driver = $.trim($("#mail_driver").val());
+        var e_host = $.trim($("#mail_host").val());
+        var e_port = $.trim($("#mail_port").val());
+        var e_user = $.trim($("#mail_username").val());
+        var e_password = $.trim($("#mail_password").val());
+        var e_encryption = $.trim($("#mail_encryption").val());
+		$("#mailconfigstatus").html('');
+		$("#mailconfigmsg").html('');
+		$("#mailconfigstatus").removeClass("text-danger");
+		$("#mailconfigstatus").removeClass("text-success");
+        $.ajax({
+            type: "POST",
+            url: "installer/checkEmailConfig",
+            data: {
+                mail_driver: e_driver,
+                mail_host: e_host,
+                mail_port: e_port,
+                mail_username: e_user,
+                mail_password: e_password,
+                mail_encryption: e_encryption
+            },
+            dataType: "json",
+            beforeSend: function () {
+				 $("#mailconfigmsg").html('<i class="fas fa-spinner spin"></i> Sending Email...');
+            },
+            complete: function () {
+                 $("#mailconfigmsg").html('');
+            },
+            success: function (data) {
+                if (data.success == "1") {
+					 $("#mailconfigstatus").addClass("text-success").html('<i class="fas fa-check"></i> '+data.message);
+					$("#check_email_config").prop("disabled", true);
+					$("#next").prop("disabled", false);
+                } else {
+					$("#mailconfigstatus").addClass("text-danger").html('<i class="fas fa-close"></i> '+data.message);
+					$("#next").prop("disabled", true);
+                }
+            }
+        });
+    });*/
+});
+/**
+ * @Description - Validate the database host name based on the provided host name.
+ * @Author Prioranjan Chowdhury <sumon.sustcse@gmail.com>
+ * @Created On 07th March, 2025
+ * @Param void
+ * @Return void
+ */
+$(document).on("blur", "#DatabaseHostName", function(){
+	var val = $.trim($(this).val());
+	var root = $(this);
+	var interval = null;
+	var hostName = $.trim($('#DatabaseHostName').val()), 
+		dbUser = $.trim($('#DatabaseUserName').val()),
+		dbPassword = $.trim($('#DatabasePassword').val()), 
+		dbName = $.trim($('#DatabaseName').val()),
+		portNum = $.trim($('#PortNumber').val()), 
+		socName = $.trim($('#SocketName').val());
+		 $("#DatabaseHostName").closest(".form-group").find(".message #checking-text").html('');
+		 $("#DatabaseHostName").closest(".form-group").find(".message #message-text").addClass("text-success").html('');
+		 $("#DatabaseHostName").parent().removeClass("has-error");
+	if(val != ''){
+		$.ajax({
+			type: "POST",
+			url: "installer/checkDbCrud",
+			data: {
+				hostName: hostName,
+				dbUser: dbUser,
+				dbPassword: dbPassword,
+				dbName: dbName,
+				portNum: portNum,
+				socName: socName,
+				action: "host"
+			},
+			dataType: 'json',
+			beforeSend: function(){
+				 $("#DatabaseHostName").closest(".form-group").find(".message #checking-text").html('<i class="fas fa-spinner spin"></i> Checking Database Host Name..');
+			},
+			complete: function(){
+				  $("#DatabaseHostName").closest(".form-group").find(".message #checking-text").html('');
+			},
+			success: function(data){
+				if (data.success == "1") {
+					 $("#DatabaseHostName").closest(".form-group").find(".message #message-text").removeClass('text-danger').addClass("text-success").html('<i class="fas fa-check"></i> Provided host is valid');
+					 $("#DatabaseHostName").parent().removeClass("has-error");
+				}else{
+					 $("#DatabaseHostName").closest(".form-group").find(".message #message-text").removeClass('text-success').addClass("text-danger").html('<i class="fas fa-close"></i> Provided host name is invalid');
+					$("#DatabaseHostName").parent().addClass("has-error");
+				}
+			}
+		});
+	}
+});
+/**
+ * @Description - Validate the database port number based on the provided port number.
+ * @Author Prioranjan Chowdhury <sumon.sustcse@gmail.com>
+ * @Created On 07th March, 2025
+ * @Param void
+ * @Return void
+ */
+$(document).on("blur", "#PortNumber", function(){
+        var val = $.trim($(this).val());
+        var root = $(this);
+        var interval = null;
+        var hostName = $.trim($('#DatabaseHostName').val()), dbUser = $.trim($('#DatabaseUserName').val()),
+            dbPassword = $.trim($('#DatabasePassword').val()), dbName = $.trim($('#DatabaseName').val()),
+            portNum = $.trim($('#PortNumber').val()), socName = $.trim($('#SocketName').val());
+			 $("#PortNumber").closest(".form-group").find(".message #checking-text").html('');
+		//$("#checking-text").html('');
+		 $("#PortNumber").closest(".form-group").find(".message #message-text").addClass("text-success").html('');
+		 $("#PortNumber").parent().removeClass("has-error");
+        if(val !=''){
+            $.ajax({
+                type: "POST",
+                url: "installer/checkDbCrud",
+                data: {
+                    hostName:hostName,dbUser:dbUser,dbPassword:dbPassword,dbName:dbName,portNum:portNum,socName:socName,action:"checkPort"
+                },
+                dataType: 'json',
+                beforeSend: function(){
+                    $("#PortNumber").closest(".form-group").find(".message #checking-text").html('<i class="fas fa-spinner spin"></i> Checking Port Number..');
+                },
+                complete: function(){
+                   $("#PortNumber").closest(".form-group").find(".message #checking-text").html('');
+                },
+                success: function(data){
+                  
+                    if (data.success == "1") {
+						$("#PortNumber").closest(".form-group").find(".message #message-text").removeClass('text-danger').addClass("text-success").html('<i class="fas fa-check"></i> Provided port number is valid');
+						$("#PortNumber").parent().removeClass("has-error");
+                    }else{
+						//if hostname or database name is invalid
+						 $("#PortNumber").closest(".form-group").find(".message #message-text").removeClass('text-success').addClass("text-danger").html('<i class="fas fa-close"></i> Provided port number is invalid');
+						$("#PortNumber").parent().addClass("has-error");
+                        
+                    }
+                }
+            });
+        }
+    });
+	/**
+	 * @Description - Validate the database name based on the provided database name.
+	 * @Author Prioranjan Chowdhury <sumon.sustcse@gmail.com>
+	 * @Created On 07th March, 2025
+	 * @Param void
+	 * @Return void
+	 */
+	$(document).on("blur", "#DatabaseName", function(){
+		 var checkDbCrudUrl = "{{ url('installer/checkDbCrud') }}";
+		var val = $.trim($(this).val());
+		var root = $(this);
+		var interval = null;
+		var hostName = $.trim($('#DatabaseHostName').val()), dbUser = $.trim($('#DatabaseUserName').val()),
+			dbPassword = $.trim($('#DatabasePassword').val()), dbName = $.trim($('#DatabaseName').val()),
+			portNum = $.trim($('#PortNumber').val()), socName = $.trim($('#SocketName').val());
+		$("#DatabaseName").closest(".form-group").find(".message #checking-text").html('');
+		 $("#DatabaseName").closest(".form-group").find(".message #message-text").addClass("text-success").html('');
+		 $("#DatabaseName").parent().removeClass("has-error");
+		if(val !=''){
+			$.ajax({
+				type: "POST",
+				url: 'installer/checkDbCrud',
+				data: {
+					hostName:hostName,dbUser:dbUser,dbPassword:dbPassword,dbName:dbName,portNum:portNum,socName:socName,action:"database"
+				},
+				dataType: 'json',
+				beforeSend: function(){
+					$("#DatabaseName").closest(".form-group").find(".message #checking-text").html('<i class="fas fa-spinner spin"></i> Checking Database Name..');
+				},
+				complete: function(){
+					 $("#DatabaseName").closest(".form-group").find(".message #checking-text").html('');
+				},
+				success: function(data){
+					//if all information is valid
+					if (data.success == "1") {
+						$("#DatabaseName").closest(".form-group").find(".message #message-text").removeClass('text-danger').addClass("text-success").html('<i class="fas fa-check"></i> Provided Database Name is valid');
+						$("#DatabaseName").parent().removeClass("has-error");
+					}else{
+						//if hostname or database name is invalid
+						 $("#DatabaseName").closest(".form-group").find(".message #message-text").removeClass('text-success').addClass("text-danger").html('<i class="fas fa-close"></i> '+data.txt);
+						$("#DatabaseName").parent().addClass("has-error");
+					}
+				}
+			});
+		}
+	});
+	/**
+	 * @Description - Validate the database socket name based on the provided socket name.
+	 * @Author Prioranjan Chowdhury <sumon.sustcse@gmail.com>
+	 * @Created On 07th March, 2025
+	 * @Param void
+	 * @Return void
+	 */
+	$(document).on("blur", "#SocketName", function(){
+        var val = $.trim($(this).val());
+        var root = $(this);
+        var interval = null;
+        var hostName = $.trim($('#DatabaseHostName').val()), dbUser = $.trim($('#DatabaseUserName').val()),
+            dbPassword = $.trim($('#DatabasePassword').val()), dbName = $.trim($('#DatabaseName').val()),
+            portNum = $.trim($('#PortNumber').val()), socName = $.trim($('#SocketName').val());
+		$("#SocketName").closest(".form-group").find(".message #checking-text").html('');
+		 $("#SocketName").closest(".form-group").find(".message #message-text").addClass("text-success").html('');
+		 $("#SocketName").parent().removeClass("has-error");
+        if(val !=''){
+            $.ajax({
+                type: "POST",
+                url: "installer/checkDbCrud",
+                data: {
+                    hostName:hostName,dbUser:dbUser,dbPassword:dbPassword,dbName:dbName,portNum:portNum,socName:socName,action:"checkSocket"
+                },
+                dataType: 'json',
+                beforeSend: function(){
+					$("#SocketName").closest(".form-group").find(".message #checking-text").html('<i class="fas fa-spinner spin"></i> Checking Socket Name..');
+                },
+                complete: function(){
+					 $("#SocketName").closest(".form-group").find(".message #checking-text").html('');
+                },
+                success: function(data){
+                    //if all information is valid
+                    if (data.success == "1") {
+						$("#SocketName").closest(".form-group").find(".message #message-text").removeClass('text-danger').addClass("text-success").html('<i class="fas fa-check"></i> Provided Socket Name is valid');
+						$("#SocketName").parent().removeClass("has-error");
+                    }else{
+                        //if hostname or database name is invalid
+						 $("#SocketName").closest(".form-group").find(".message #message-text").removeClass('text-success').addClass("text-danger").html('<i class="fas fa-close"></i> Provided socket name is invalid');
+						$("#SocketName").parent().addClass("has-error");
+                    }
+                }
+            });
+        }
+    });
+	/**
+	 * @Description - Validate the database user name based on the provided user name.
+	 * @Author Prioranjan Chowdhury <sumon.sustcse@gmail.com>
+	 * @Created On 07th March, 2025
+	 * @Param void
+	 * @Return void
+	 */
+	$(document).on("blur", "#DatabaseUserName", function(){
+		var val = $.trim($(this).val());
+		var root = $(this);
+		var interval = null;
+		var hostName = $.trim($('#DatabaseHostName').val()), dbUser = $.trim($('#DatabaseUserName').val()),
+			dbPassword = $.trim($('#DatabasePassword').val()), dbName = $.trim($('#DatabaseName').val()),
+			portNum = $.trim($('#PortNumber').val()), socName = $.trim($('#SocketName').val());
+		$("#DatabaseUserName").closest(".form-group").find(".message #checking-text").html('');
+		 $("#DatabaseUserName").closest(".form-group").find(".message #message-text").addClass("text-success").html('');
+		 $("#DatabaseUserName").parent().removeClass("has-error");
+		if(val != '')
+		{
+			$.ajax({
+					type: "POST",
+					url: base_url+"installer/checkDbCrud",
+					data: {
+						hostName:hostName,dbUser:dbUser,dbPassword:dbPassword,dbName:dbName,portNum:portNum,socName:socName,action:"credential"
+					},
+					dataType: 'json',
+					beforeSend: function(){
+						 $("#DatabaseUserName").closest(".form-group").find(".message #checking-text").html('<i class="fas fa-spinner spin"></i> Checking Database Username..');
+					},
+					complete: function(){
+						$("#DatabaseUserName").closest(".form-group").find(".message #checking-text").html('');
+					},
+					success: function(data){
+						//if all information is valid
+						if (data.success == "1") {
+							$("#DatabaseUserName").closest(".form-group").find(".message #message-text").removeClass('text-danger').addClass("text-success").html('<i class="fas fa-check"></i> Provided Database Username is valid');
+						$("#DatabaseUserName").parent().removeClass("has-error");
+						}else{
+							//if hostname or database name is invalid
+							 $("#DatabaseUserName").closest(".form-group").find(".message #message-text").removeClass('text-success').addClass("text-danger").html('<i class="fas fa-close"></i> Provided Database Username is invalid');
+							$("#DatabaseUserName").parent().addClass("has-error");
+						}
+					}
+				});
+		}
+	});
+	/**
+	 * @Description - Validate the database password based on the provided password.
+	 * @Author Prioranjan Chowdhury <sumon.sustcse@gmail.com>
+	 * @Created On 07th March, 2025
+	 * @Param void
+	 * @Return void
+	 */
+	$(document).on("focus blur", "#DatabasePassword", function(){
+		var val = $.trim($(this).val());
+		var root = $(this);
+		var interval = null;
+		var hostName = $.trim($('#DatabaseHostName').val()), dbUser = $.trim($('#DatabaseUserName').val()),
+			dbPassword = $.trim($('#DatabasePassword').val()), dbName = $.trim($('#DatabaseName').val()),
+			portNum = $.trim($('#PortNumber').val()), socName = $.trim($('#SocketName').val());
+			$("#DatabaseUserName").closest(".form-group").find(".message #checking-text").html('');
+			 $("#DatabaseUserName").closest(".form-group").find(".message #message-text").addClass("text-success").html('');
+			 $("#DatabaseUserName").parent().removeClass("has-error");
+			 
+			 $("#DatabasePassword").closest(".form-group").find(".message #checking-text").html('');
+			 $("#DatabasePassword").closest(".form-group").find(".message #message-text").addClass("text-success").html('');
+			 $("#DatabasePassword").parent().removeClass("has-error");
+		if(dbUser != ""){
+			$.ajax({
+				type: "POST",
+				url: "installer/checkDbCrud",
+				data: {
+					hostName:hostName,dbUser:dbUser,dbPassword:dbPassword,dbName:dbName,portNum:portNum,socName:socName,action:"credential"
+				},
+				dataType: 'json',
+				beforeSend: function(){
+					 $("#DatabaseUserName").closest(".form-group").find(".message #checking-text").html('<i class="fas fa-spinner spin"></i> Checking Database Username..');
+					  $("#DatabasePassword").closest(".form-group").find(".message #checking-text").html('<i class="fas fa-spinner spin"></i> Checking Database Password..');
+				},
+				complete: function(){
+					$("#DatabaseUserName").closest(".form-group").find(".message #checking-text").html('');
+					$("#DatabasePassword").closest(".form-group").find(".message #checking-text").html('');
+				},
+				success: function(data){
+					//if all information is valid
+					if (data.success == "1") {
+						$("#DatabaseUserName").closest(".form-group").find(".message #message-text").removeClass('text-danger').addClass("text-success").html('<i class="fas fa-check"></i> Provided Database Username is valid');
+						$("#DatabaseUserName").parent().removeClass("has-error");
+						
+						$("#DatabasePassword").closest(".form-group").find(".message #message-text").removeClass('text-danger').addClass("text-success").html('<i class="fas fa-check"></i> Provided Database Password is valid');
+						$("#DatabasePassword").parent().removeClass("has-error");
+					}else{
+						 $("#DatabaseUserName").closest(".form-group").find(".message #message-text").removeClass('text-success').addClass("text-danger").html('<i class="fas fa-close"></i> Provided Database Username is invalid');
+							$("#DatabaseUserName").parent().addClass("has-error");
+							
+							$("#DatabasePassword").closest(".form-group").find(".message #message-text").removeClass('text-success').addClass("text-danger").html('<i class="fas fa-close"></i> Provided Database Password is invalid');
+							$("#DatabasePassword").parent().addClass("has-error");
+							
+					}
+				}
+			});
+		}
+
+	});
+
+/**
+ * @Description This method loads a form via AJAX based on the selected step. It dynamically changes the page title.
+ * @Author Prioranjan Chowdhury <sumon.sustcse@gmail.com>
+ * @Param {number} step - The step number to load the corresponding form.
+ * @Return {void}
+ */
+function loadForm(step){
+	var titleArray=["Configuration Check", "Application Settings", "Database Settings", "Email Settings","Preview & Install!"];
+            $('.panel-heading').html(titleArray[step-1]);
+            $.ajax({
+                url: base_url+"loadForm",
+                type: 'post',
+                data: {step:step},
+                cache: false,
+                beforeSend: function () {
+                    $('#formDiv').html('<div class="spinner-small"></div>');
+                },
+                success: function (data) {
+					$(".step"+step).removeClass("disabled");
+					$('#formDiv').html(data);
+					validator.init();
+                },
+                error: function (xhr) { // if error occured
+
+                },
+                complete: function () {
+
+                }
+            });
+}
+/**
+ * @Description This method generates an app key each time it is called.
+ * @Author Prioranjan Chowdhury <sumon.sustcse@gmail.com>
+ * @Return void
+ * @Param void
+ */
+function generateAppKey() {
+	let randomBytes = new Uint8Array(32);
+	window.crypto.getRandomValues(randomBytes); // Generate secure random bytes
+	let base64Key = btoa(String.fromCharCode.apply(null, randomBytes)); // Convert to Base64
+	$('#app_key').val(`base64:${base64Key}`);
+}
+/**
+ * @Description Submits the application settings form, performs validation, and handles AJAX submission.
+ * @Author Prioranjan Chowdhury <sumon.sustcse@gmail.com>
+ * @CreatedOn 04th March, 2025
+ * @Param {void}
+ * @Return {void}
+ */
+$(document).on('submit', '#applicationSettingForm', function (e) {
+    var data = $(this).serializeArray();
+    e.preventDefault();
+
+    // Validate form before submission
+    if (!$(this).valid()) {
+        return false;
+    }
+
+    var postData = data;
+    var formURL = $(this).attr("action");
+
+    // AJAX form submission
+    $.ajax({
+        url: formURL,
+        type: "POST",
+        data: $('#applicationSettingForm').serialize(),
+		dataType: 'Json',
+        success: function (data, textStatus, jqXHR) {
+           // If the response is successful, load the next form step
+            if (data.status == "success") {
+                loadForm(data.step);
+            }
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            // Handle errors here if needed
+        }
+    });
+});
+/**
+ * @Description Submits the database settings form, performs validation, and handles AJAX submission.
+ * @Author Prioranjan Chowdhury <sumon.sustcse@gmail.com>
+ * @CreatedOn 04th March, 2025
+ * @Param {void}
+ * @Return {void}
+ */
+$(document).on('submit', '#databaseSettingForm', function (e) {
+	var data = $(this).serializeArray();
+	e.preventDefault();
+	if (!$(this).valid()) {
+		return false;
+	}
+	var postData = data;
+	var formURL = $(this).attr("action");
+	$.ajax(
+	{
+		url: formURL,
+		type: "POST",
+		data: $('#databaseSettingForm').serialize(),
+		dataType: 'Json',
+		success: function (data, textStatus, jqXHR)
+		{
+			 // If the response is successful, load the next form step
+			if (data.status == "success") {
+			  loadForm(data.step);
+			} 
+		},
+		error: function (jqXHR, textStatus, errorThrown)
+		{
+			//$this.button('reset');
+		}
+    });
+});
+
+$(document).on('click', '#check_email_config', function (e) {
+        e.preventDefault(); // Prevent form submission
+		//validate form
+        if (!$("#emailSettingsForm").valid()) {
+            return false; // Stop if validation fails
+        }
+
+        // If validation passes, proceed with AJAX request
+        var e_driver = $.trim($("#mail_driver").val());
+        var e_host = $.trim($("#mail_host").val());
+        var e_port = $.trim($("#mail_port").val());
+        var e_user = $.trim($("#mail_username").val());
+        var e_password = $.trim($("#mail_password").val());
+        var e_encryption = $.trim($("#mail_encryption").val());
+		$("#mailconfigstatus").html('');
+		$("#mailconfigmsg").html('');
+		$("#mailconfigstatus").removeClass("text-danger");
+		$("#mailconfigstatus").removeClass("text-success");
+        $.ajax({
+            type: "POST",
+            url: "installer/checkEmailConfig",
+            data: {
+                mail_driver: e_driver,
+                mail_host: e_host,
+                mail_port: e_port,
+                mail_username: e_user,
+                mail_password: e_password,
+                mail_encryption: e_encryption
+            },
+            dataType: "json",
+            beforeSend: function () {
+				 $("#mailconfigmsg").html('<i class="fas fa-spinner spin"></i> Sending Email...');
+            },
+            complete: function () {
+                 $("#mailconfigmsg").html('');
+            },
+            success: function (data) {
+                if (data.success == "1") {
+					 $("#mailconfigstatus").addClass("text-success").html('<i class="fas fa-check"></i> '+data.message);
+					$("#check_email_config").prop("disabled", true);
+					$("#next").prop("disabled", false);
+                } else {
+					$("#mailconfigstatus").addClass("text-danger").html('<i class="fas fa-close"></i> '+data.message);
+					$("#next").prop("disabled", true);
+                }
+            }
+        });
+    });
+
+
+
+

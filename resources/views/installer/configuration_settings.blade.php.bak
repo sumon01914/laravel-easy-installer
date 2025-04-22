@@ -1,0 +1,84 @@
+<table class="table table-striped table-hover">
+  <thead>
+    <tr>
+      <th class="col-lg-2">Resource Name</th>
+      <th class="col-lg-1">Status</th>
+      <th class="col-lg-9">Version specific comment</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+  <tr  {{!! version_compare(PHP_VERSION, \App\AppConfig::SUPPORT_MIN_PHP_VERSION, '>=') ? ' class="success"' : ' class="danger"' !!}> 
+		<td>PHP</td>
+		<td>
+			<i class="fas {!! version_compare(PHP_VERSION, \App\AppConfig::SUPPORT_MIN_PHP_VERSION, '>=') ? 'fa-check preflight-success' : 'fa-times preflight-error' !!}"></i>
+       </td>
+      <td>
+	  You're running PHP version {{ PHP_VERSION }}. A minimum version of ({{\App\AppConfig::SUPPORT_MIN_PHP_VERSION }} is required.) </td>
+  </tr>
+  @php
+    $mysqlVersionOutput = shell_exec('mysql -V');
+    preg_match('/(\d+\.\d+\.\d+)/', $mysqlVersionOutput, $matches); // Adjusted regex
+    $mysqlVersion = $matches[0] ?? '0.0.0';
+	@endphp
+<tr {!! version_compare($mysqlVersion, \App\AppConfig::SUPPORT_MIN_MYSQL_VERSION, '>=') ? 'class="success"' : 'class="danger"' !!}>
+    <td>MySQL</td>
+    <td>
+        <i class="fas {!! version_compare($mysqlVersion, \App\AppConfig::SUPPORT_MIN_MYSQL_VERSION, '>=') ? 'fa-check preflight-success' : 'fa-times preflight-error' !!}"></i>
+    </td>
+    <td>
+        You're running MySQL version <strong>{{ $mysqlVersion }}</strong>. A minimum version of <strong>{{ \App\AppConfig::SUPPORT_MIN_MYSQL_VERSION }}</strong> is required.
+    </td>
+</tr>
+<tr >
+	<td colspan="3"><b>Extension Loaded</td>
+</tr>
+@foreach($extensionsStatus as $ext => $status)
+<tr   class="{!! $status ? 'success' : 'danger' !!}">
+  <td>{{ ucfirst($ext) }}</td>
+  <td>
+	<i class="fas {!! $status ? 'fa-check preflight-success' : 'fa-times preflight-error' !!}"></i>
+   </td>
+   <td>
+	{{ ucfirst($ext) }} Extension @if($status)Loaded @else Not Loaded @endif
+   </td>
+</tr>
+@endforeach
+<tr  class="warning">
+  <td>Environment</td>
+  <td>--</td>
+  <td>
+	@if (App::environment('local'))
+		<p>You're in local mode</p>
+	@elseif (App::environment('production'))
+		<p>You're in production mode</p>
+	@endif
+	</td>
+</tr>
+<tr  class="warning">
+	<td>Debug Mode</td>
+	<td>--</td>
+	<td>
+	@if (config('app.debug'))<p>Debug mode is ON</p>@else<p>Debug mode is OFF</p>@endif
+	</td>
+</tr>
+    <tr  class="{!! \App\AppConfig::SYSTEM_EMAIL ? 'success' : 'danger' !!}">
+      <td>Test Email</td>
+      <td>
+	   <i class="fas {!! \App\AppConfig::SYSTEM_EMAIL ? 'fa-check preflight-success' : 'fa-times preflight-error' !!}"></i>
+      </td>
+        <td>
+		@if(\App\AppConfig::SYSTEM_EMAIL)
+		<p>The test email is set to {{\App\AppConfig::SYSTEM_EMAIL}} in the <code>App\AppConfig.php</code> file. You can update this value by replacing it with your email address. A test email will be sent to this email account under the email configuration settings </p>
+	@else
+		Your test email address is not set yet. Please configure it in the <code>App\AppConfig.php</code> file using the <code>SYSTEM_EMAIL</code> variable.
+		@endif
+      </td>
+    </tr>
+	<tr>
+		<td colspan="3">
+		<button onclick="javascript:loadForm(2)" class="btn btn-primary">Next</button>
+		</td>
+	</tr>
+  </tbody>
+</table>

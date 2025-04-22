@@ -1,0 +1,118 @@
+<form action="{{ route('installer.application.process') }}" method="POST" name="emailSettingsForm" id="emailSettingsForm">
+<input type="hidden" name="step" value="4" id="step"/>     
+<div class="row">
+	<div class="col-sm-6 col-lg-6 col-md-6">
+		<div class="form-group ">
+			<label for="pwd">Mail Driver</label> <small class="req"> *</small>
+			<input type="text" class="form-control" value="{{session('step4.mail_driver')}}" name="mail_driver" id="mail_driver" placeholder="i.e smtp">
+		</div>
+	</div>
+</div>
+<div class="row">
+	<div class="col-sm-6 col-lg-6 col-md-6">
+		<div class="form-group ">
+			<label for="pwd">Mail Host</label> <small class="req"> *</small>
+			<input type="text" class="form-control" value="{{session('step4.mail_host')}}" name="mail_host" id="mail_host" placeholder="i.e smtp.gmail.com">
+		</div>
+	</div>
+</div>
+<div class="row">
+	<div class="col-sm-6 col-lg-6 col-md-6">
+		<div class="form-group ">
+			<label for="pwd">Mail Port</label> <small class="req"> *</small>
+			<input type="text" class="form-control" value="{{session('step4.mail_port')}}" name="mail_port" id="mail_port" placeholder="i.e 587">
+		</div>
+	</div>
+</div>
+<div class="row">
+	<div class="col-sm-6 col-lg-6 col-md-6">
+		<div class="form-group ">
+			<label for="pwd">Mail Username</label> <small class="req"> *</small>
+			<input type="text" class="form-control" value="{{session('step4.mail_username')}}" name="mail_username" id="mail_username" placeholder="laravel_installer@gmail.com">
+		</div>
+	</div>
+</div>
+<div class="row">
+	<div class="col-sm-6 col-lg-6 col-md-6">
+		<div class="form-group ">
+			<label for="pwd">Mail Password</label> <small class="req"> *</small>
+			<input type="text" class="form-control" value="{{session('step4.mail_password')}}" name="mail_password" id="mail_password">
+		</div>
+	</div>
+</div>
+<div class="row">
+	<div class="col-sm-6 col-lg-6 col-md-6">
+		<div class="form-group ">
+			<label for="pwd">Mail Encryption</label> <small class="req"> *</small>
+			<input type="text" class="form-control" value="{{session('step4.mail_encryption')}}" name="mail_encryption" id="mail_encryption" placeholder="i.e tls">
+		</div>
+	</div>
+</div>
+<div class="row">
+	<div class="col-sm-6 col-lg-6 col-md-6">
+		<label for="pwd">Send Test Email To </label> 
+		<input readonly="true" type="text" class="form-control" value="{{\App\AppConfig::SYSTEM_EMAIL}}" name="email_to" id="email_to"> <small>
+		<p class="help-block">This will send a test email to <b>{{\App\AppConfig::SYSTEM_EMAIL }}</b></p>
+		</small>
+	</div>
+</div>
+<div class="row">
+<div class="col-sm-6 col-lg-6 col-md-6">
+<div class="form-group ">
+	<span id="mailconfigmsg"></span>
+	<span id="mailconfigstatus"></span>
+	</div>
+</div>
+</div>
+<div class="row">
+	<div class="col-sm-6 col-lg-6 col-md-6">
+	<div class="form-group ">
+		<button type="button" id="check_email_config" name="check_email_config" class="btn btn-success btn-block"><i class="fa fa-cog" aria-hidden="true"></i> Check Configuration</button>
+		</div>
+	</div>
+</div>
+<div class="row">
+<div class="col-sm-6 col-lg-6 col-md-6">
+	<button onclick="loadForm(3)" type="button" class="btn btn-warning"><i class="fas fa-angle-double-left"></i> Back</button>
+	<button type="submit" class="btn btn-primary processApplicationSettings" name="next" id="next">Next</button>
+	</div>
+</div>
+</form>
+<script type="text/javascript">
+$(document).ready(function () {
+   
+});
+
+$("#emailSettingsForm").submit(function (e)
+    {
+
+		var data = $(this).serializeArray();
+        e.preventDefault();
+		if (!$(this).valid()) {
+			return false;
+		}
+        var postData = data;
+        var formURL = $(this).attr("action");
+        $.ajax(
+                {
+                    url: formURL,
+                    type: "POST",
+					//dataType: 'html',
+                    data: $('#emailSettingsForm').serialize(),
+                  //  dataType: 'Json',
+                    success: function (data, textStatus, jqXHR)
+                    {
+						console.log(data);
+                        if (data.status == "success") {
+                          loadForm(data.step);
+                        } 
+
+                      //  $this.button('reset');
+                    },
+                    error: function (jqXHR, textStatus, errorThrown)
+                    {
+                        //$this.button('reset');
+                    }
+                });
+					});
+</script>

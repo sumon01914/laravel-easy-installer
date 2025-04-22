@@ -1,0 +1,28 @@
+@section('footer')
+
+ <div class="copyright-text text-center">
+            <p>&copy;<?php echo date("Y");?> - <span class="">Powered by IDEAL HRM</span>.</p>
+        </div>
+		
+<!-- Modal -->
+<div class="modal fade" id="loading-box" tabindex="-1" role="dialog" aria-labelledby="favoritesModalLabel">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <span id="InstallationOnGoing" style="text-align: left; font-weight: normal; font-size: 18px; color: #000000">
+          Please wait!! Installation is ongoing. It may take several minutes.
+        </span>
+        <div class="progress">
+          <div class="progress-bar progress-bar-striped progress-bar-success active" role="progressbar"
+               style="width: 1%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
+          </div>
+        </div>
+        <span id="workingOn" style="text-align: left; font-weight: bold; font-size: 18px; color: #0d6aad;">
+          Creating Database
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+@endsection

@@ -1,0 +1,20 @@
+<?php
+
+namespace App\Http\Middleware;
+
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken as Middleware;
+
+class VerifyCsrfToken extends Middleware
+{
+    /**
+     * The URIs that should be excluded from CSRF verification.
+     *
+     * @var array<int, string>
+     */
+    protected $except = [
+        'installer/seed',  // Add the route that triggers the seed operation here
+		'installer/createUser',
+		'installer/CreatingDB',
+		'installer/checkDbCrud'
+    ];
+}

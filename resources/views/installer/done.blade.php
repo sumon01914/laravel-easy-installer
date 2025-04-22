@@ -1,0 +1,11 @@
+
+@extends('main')
+@section('content')
+<div class="container" style="text-align:center;min-height:500px">
+    <div class="card col-md-10">
+        <h1 class="text-success"> Welcome to Laravel Easy Installer!</h1>
+        <p class="lead">Congratulations! The installation has been completed successfully.</p>
+        <a href="{{url('/login')}}" class="btn btn-primary mt-3">Click Here to Login</a>
+    </div>
+</div>
+@endsection

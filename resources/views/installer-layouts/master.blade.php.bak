@@ -1,0 +1,4 @@
+@extends('frontend.installer-layouts.med-app')
+@extends('frontend.installer-layouts.med-nav')
+@extends('frontend.installer-layouts.med-header')
+@extends('frontend.installer-layouts.med-footer')

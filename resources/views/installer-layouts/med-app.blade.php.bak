@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<title>{{\App\AppConfig::GENERAL_PRODUCT_NAME }} Installer</title>
+		<!-- Tell the browser to be responsive to screen width -->
+		<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+		<meta name="csrf-token" content="{{ csrf_token() }}">
+
+
+		<!-- Bootstrap 3.3.6 -->
+		<link rel="stylesheet" href="{{ URL::asset('/bootstrap-3.3.7/css/bootstrap.min.css') }}" type="text/css">
+
+		<!-- Font Awesome -->
+		<link rel="stylesheet" href="{{ asset('/libs/font-awesome-4.7.0/css/font-awesome.min.css') }}">
+
+		<!-- Ionicons -->
+		<link rel="stylesheet" href="{{ asset('/css/ionicons.min.css') }}">
+
+		<link rel="stylesheet" href="{{ asset('/bootstrap/css/bootstrap-multiselect.css') }}">
+
+		<!-- Theme style -->
+		<link rel="stylesheet" href="{{ asset('/admin-lte/css/AdminLTE.min.css') }}">
+		<!-- AdminLTE Skins. Choose a skin from the css/skins -->
+		<link rel="stylesheet" href="{{ asset('/admin-lte/css/skins/_all-skins.min.css') }}">
+		<!-- iCheck -->
+		<link rel="stylesheet" href="{{ asset('/plugins/iCheck/flat/blue.css') }}">
+		<!-- favicon -->
+		<link rel="shortcut icon" href="{{ asset('/admin-lte/img/scbd.ico') }}">
+
+
+		<!-- jQuery 2.2.3 -->
+		<script src="{{ asset('/plugins/jQuery/jquery-2.2.3.min.js') }}"></script>
+		
+		<!--[if lt IE 9]>
+		<script src="{{ asset('/js/html5shiv.min.js') }}"></script>
+		<script src="{{ URL::asset('/js/respond.min.js') }}"></script>
+		<![endif]-->
+
+		{{--common styles for all developer in all page --}}
+		<link rel="stylesheet" href="{{ asset('/css/common-css.css') }}">
+		<script src="{{ asset('/bootbox/bootbox.js') }}" ></script>
+		<script src="{{ asset('/js/sc_notify.js') }}"></script>
+		<script src="{{ asset('/js/common_functions.js') }}"></script>
+		<script>
+
+			var token = '{{csrf_token()}}';
+			var resOkay     = '{{\App\AppConfig::GENERAL_RETURN_RESULT_OK}}';
+			var resNotOkay  = '{{\App\AppConfig::GENERAL_RETURN_RESULT_NOT_OK}}';
+			var button_info       = '{{\App\AppConfig::BUTTON_INFO}}';
+			var button_positive   = '{{\App\AppConfig::BUTTON_POSITIVE}}';
+			var button_negative   = '{{\App\AppConfig::BUTTON_NEGATIVE}}';
+
+		</script>
+		@yield('header-style')
+		
+	</head>
+	
+	<body class="hold-transition skin-red-light sidebar-mini">
+		<div class="wrapper">
+			@yield('med-header')
+			@yield('content')
+			@yield('med-footer')
+		</div>
+		
+		<!-- jQuery UI 1.11.4 -->
+		<script src="{{ asset('/libs/jquery-ui-1.11.4/jquery-ui.min.js') }}"></script>
+		<!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
+		<script>
+			$.widget.bridge('uibutton', $.ui.button);
+		</script>
+		<!-- Bootstrap 3.3.6 -->
+		<script src="{{ asset('/bootstrap-3.3.7/js/bootstrap.min.js') }}"></script>
+		<script src="{{ asset('/bootstrap/js/bootstrap-multiselect.js') }}"></script>
+		<!-- notification  -->
+		<script src="{{ asset('/plugins/notify/bootstrap-notify.js') }}"></script>
+
+		<!-- daterangepicker -->
+		<script src="{{ asset('/plugins/datatables/moment.min.js') }}"></script>
+		<!-- Slimscroll -->
+		<script src="{{ asset('/plugins/slimScroll/jquery.slimscroll.min.js') }}"></script>
+		<!-- FastClick -->
+		<script src="{{ asset('/plugins/fastclick/fastclick.js') }}"></script>
+		<!-- AdminLTE App -->
+		<script src="{{ asset('/admin-lte/js/app.min.js') }}"></script>
+		<!-- AdminLTE for demo purposes -->
+		<script src="{{ asset('/admin-lte/js/demo.js') }}"></script>
+
+		@yield('footer-script')
+	</body>
+</html>

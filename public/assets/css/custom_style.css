@@ -1,0 +1,101 @@
+.page-header{
+	color:#f53003
+}
+.spinner-small {
+	position: relative;
+	width: 3rem;
+	height: 3rem;
+	border: 0.25rem solid #3498db;
+	border-bottom: 0.25rem solid rgba(0,0,0,0);
+	border-radius: 50%;
+	animation: spin 1s linear infinite;
+ }
+#mailconfigmsg{
+	color:#0089be;
+	font-weight:bold;
+	font-size:12px;
+}
+#checking-text{
+	color:#0089be;
+	font-weight:bold;
+	font-size:12px;
+}
+fieldset {
+    border: 1px solid #ccc; /* Light gray border */
+    padding: 10px;
+    border-radius: 5px; /* Slightly rounded corners */
+}
+
+legend {
+    font-size: 1.5rem;
+    font-weight: bold;
+    padding: 2px 10px;
+    border: 1px solid #ccc;
+    
+    border-radius: 4px;
+}
+.req{
+	color:red
+}
+.accordion-wrapper {
+    border-radius: 0.25rem;
+    border: #e9ecef solid 1px;
+}
+
+.accordion-wrapper > .card > .card-header {
+    padding: 1rem;
+    height: auto;
+}
+sup{
+	font-size:15px;
+}
+.subtitle {
+    font-size: 14px; /* Adjust font size */
+    font-weight: normal; /* Adjust weight if needed */
+    color: #6c757d; /* Light gray color for subtitling */
+    font-style: italic; /* Optional: makes it italic */
+    text-transform: capitalize; /* Optional: capitalizes first letters of words */
+}
+	.is-invalid {
+    border: 1px solid red !important;
+    background-color: #ffebeb;
+    padding-right: 30px; /* Ensure space for icon */
+	
+}
+.invalid-feedback {
+    display: none;
+    width: 100%;
+    margin-top: .25rem;
+    color: #dc3545;
+}
+.login_link
+{
+	text-decoration: none !important;
+	font-size: 18px;
+	font-weight: 700;
+	color: blue !important;
+}
+.box-text{font-size:18px;}
+.box-title{color:#0089be}
+#error-message{font-size:17px;
+    padding: 5px; 
+    border: 1px solid red; 
+    margin-bottom: 10px;
+	}
+	
+#error-message ul {
+    list-style-type: none; /* Removes the default bullets */
+    padding-left: 0; /* Removes left padding */
+}
+
+#error-message ul li {
+    padding: 5px 0;
+    color: red; /* Customize text color */
+    font-weight: bold;
+}
+#error-details{margin-left:15px}
+
+ 
+       
+
+		

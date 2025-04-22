@@ -1,0 +1,104 @@
+<form action="{{ route('installer.application.process') }}" method="POST" name="applicationSettingForm" id="applicationSettingForm">
+ <input type="hidden" name="step" value="2" id="step"/>    
+<div class="row">
+	<div class="col-sm-6 col-lg-6 col-md-6">
+		<div class="form-group ">
+			<label for="pwd">Application Name</label> <small class="req"> *</small>
+			<input type="text" class="form-control field" value="{{session('step2.application_name')}}" name="application_name" id="application_name" placeholder="i.e Microsoft Corporation">
+		</div>
+	</div>
+	
+</div>
+<div class="row">
+<div class="col-sm-6 col-lg-6 col-md-6">
+		<div class="form-group ">
+			<label for="pwd">Time Zone</label> <small class="req"> *</small>
+			<select name="timeZone" class="form-control" id="timeZone">
+						<option value="">Select</option>
+						@foreach ($time_zone_list as $key => $item)
+							<option value="{{$item}}" {{ $item == session('step2.timeZone') ? 'selected' : '' }}>{{$item}}</option>
+						@endforeach
+			</select>
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-sm-6 col-lg-6 col-md-6">
+		<div class="form-group ">
+			<label for="pwd">APP URL</label>
+			<input type="text" class="form-control" value="{{ session('step2.app_url') ? session('step2.app_url') : 'http://localhost' }}" name="app_url" id="app_url" placeholder="">
+
+		</div>
+	</div>
+</div>
+<div class="row">
+   <div class="col-sm-6 col-lg-6 col-md-6">
+	<div class="form-group">
+           <label>APP Key</label>
+            <div class="input-group">
+            <input type="text" class="form-control" value="{{session('step2.app_key')}}" name="app_key" id="app_key" placeholder="">
+            <div class="input-group-btn"> 
+			<a href="javascript:generateAppKey()" class="btn btn-outline-success"><i class="fa fa-refresh"></i></a>
+			</div>
+        </div>
+    </div>
+    </div>
+</div>
+<div class="row">
+		<div class="col-sm-12 col-lg-12 col-md-12">
+			<h3>Admin Credential</h3>
+		</div>
+</div>
+<div class="row">
+		<div class="col-sm-6 col-lg-6 col-md-6">
+		<div class="form-group">
+			<label for="AdminFullName">Full Name</label> 
+			<input type="text" placeholder="i.e Jane Ace" maxlength="100" 
+				   name="AdminFullName" class="form-control" 
+				   value="{{ session('step2.AdminFullName') }}"  id="AdminFullName">
+		</div>
+		</div>
+</div>
+<div class="row">
+		<div class="col-sm-6 col-lg-6 col-md-6">
+		<div class="form-group">
+			<label for="AdminFullName">Email Address</label> 
+			<input type="text" placeholder="i.e a.jane@gmail.com" 
+				   name="AdminEmailAddress" class="form-control" 
+				   value="{{ session('step2.AdminEmailAddress') }}"  id="AdminEmailAddress">
+		</div>
+		</div>
+</div>
+<div class="row">
+		<div class="col-sm-6 col-lg-6 col-md-6">
+		<div class="form-group">
+			<label for="AdminFullName">User Name</label> 
+			<input type="text" placeholder="i.e jane" 
+				   name="adminUserName" class="form-control" 
+				   value="{{ session('step2.adminUserName') }}"  id="adminUserName">
+		</div>
+		</div>
+</div>
+<div class="row">
+		<div class="col-sm-6 col-lg-6 col-md-6">
+		<div class="form-group">
+			<label for="AdminFullName">Password</label> 
+			<input type="password" placeholder="" 
+				   name="Password" class="form-control" 
+				   value="{{ session('step2.Password') }}"  id="Password">
+		</div>
+		</div>
+</div>
+<div class="row">
+    <div class="col-sm-6 col-lg-6 col-md-6">
+	<button onclick="loadForm(1)" type="button" class="btn btn-warning"><i class="fas fa-angle-double-left"></i> Back</button>
+	<button type="submit"  data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i> Saving" class="btn btn-primary processApplicationSettings"><i class="fas fa-angle-double-right"></i> Next</button>
+	</div>
+</div>
+</form>
+<script type="text/javascript">
+	 $(document).ready(function() {
+		generateAppKey();
+	});
+</script>

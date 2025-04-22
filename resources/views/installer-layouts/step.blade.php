@@ -1,0 +1,37 @@
+<div class="col-lg-11 col-lg-offset-1">
+	<div class="row bs-wizard" style="border-bottom:0;">
+	  <div class="col-xs-2 bs-wizard-step step1 active">
+		<div class="text-center bs-wizard-stepnum">Step 1</div>
+		<div class="progress"><div class="progress-bar"></div></div>
+		<a href="javascript:loadForm(1)" class="bs-wizard-dot"></a>
+		<div class="bs-wizard-info text-center"> Configuration Check</div>
+	  </div>
+
+	  <div class="col-xs-2 bs-wizard-step step2 disabled"><!-- complete -->
+		<div class="text-center bs-wizard-stepnum">Step 2</div>
+		<div class="progress"><div class="progress-bar"></div></div>
+		<a href="javascript:loadForm(2)" class="bs-wizard-dot"></a>
+		<div class="bs-wizard-info text-center">Application Settings</div>
+	  </div>
+
+	  <div class="col-xs-2 bs-wizard-step step3 disabled"><!-- complete -->
+		<div class="text-center bs-wizard-stepnum">Step 3</div>
+		<div class="progress"><div class="progress-bar"></div></div>
+		<a href="javascript:loadForm(3)" class="bs-wizard-dot"></a>
+		<div class="bs-wizard-info text-center">Database Settings</div>
+	  </div>
+	  <div class="col-xs-2 bs-wizard-step step4 disabled"><!-- complete -->
+		<div class="text-center bs-wizard-stepnum">Step 4</div>
+		<div class="progress"><div class="progress-bar"></div></div>
+		<a href="javascript:loadForm(4)" class="bs-wizard-dot"></a>
+		<div class="bs-wizard-info text-center">Email Settings</div>
+	  </div>
+
+	  <div class="col-xs-2 bs-wizard-step step5 disabled"><!-- active -->
+		<div class="text-center bs-wizard-stepnum">Step 5</div>
+		<div class="progress"><div class="progress-bar"></div></div>
+		<a  href="javascript:loadForm(5)" class="bs-wizard-dot"></a>
+		<div class="bs-wizard-info text-center">Preview & Install!</div>
+	  </div>
+  </div>
+</div>
