@@ -20,7 +20,6 @@ Place source in: `C:/xampp/htdocs/installer`
 
 Unzip and ensure contents are directly inside the `installer/` directory:
 
-```text
 installer/
 ├── app/
 ├── bootstrap/
