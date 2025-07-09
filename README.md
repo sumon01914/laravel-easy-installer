@@ -37,7 +37,7 @@ installer/
 
 cp .env.example .env
 
-**Generate Application Key**
+# Generate Application Key
 
 
 
