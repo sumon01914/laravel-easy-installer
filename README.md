@@ -30,7 +30,6 @@ installer/
 ├── .env
 ├── composer.json
 └── index.php
-
 🔧 Create Configuration File
 
 
