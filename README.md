@@ -18,15 +18,7 @@ To install this installer , installation environment should meet following requi
 1. Place source in: C:/xampp/htdocs/installer
 2. Unzip and ensure contents are directly inside the installer/ directory:
 
-installer/
- ├── app/
- ├── bootstrap/
- ├── config/
- ├── public/
- ├── routes/
- ├── .env
- ├── composer.json
- └── index.php
+
 
 
 
