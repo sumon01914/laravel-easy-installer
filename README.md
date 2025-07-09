@@ -32,6 +32,10 @@ installer/
 ├── composer.json
 └── index.php
 
+**Create Configuration File**
+
+cp .env.example .env
+
 
 
 
