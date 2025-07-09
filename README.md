@@ -31,7 +31,9 @@ installer/
 ├── composer.json
 └── index.php
 
-🔧 Create Configuration File
+⚙️ Create Configuration File
+
+Run the following command to create your .env file:
 
 
 cp .env.example .env
