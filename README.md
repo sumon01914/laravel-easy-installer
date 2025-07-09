@@ -1,28 +1,4 @@
 
-Laravel Easy Installer v1.0
-Installation Manual
-
-Table of Contents
-1	Introduction	2
-1.1	Purpose	2
-2	Requirements	3
-2.1   Copy source files	3
-2.2   Create configuration file	4
-2.3   Generate new application key	4
-3. Laravel Easy Installer-Installation Guide	5
-3.1 . Step 1: Configuration Check:	5
-3.2 Step 2: Application Settings:	5
-3.3 Step3: Database Settings:	7
-3.4 Step4: Email Settings:	8
-Required Email Settings:	8
-3.5 Step5: Preview and Install:	9
-What Happens in This Step?	9
-Installation Process:	10
-4. How to integrate into your existing system:	11
-5. IMPORTANT NOTE:	12
-6.        Revision History	13
-
-
 1	Introduction
 1.1	Purpose 
 This document describes the installation process for the Laravel Easy Installer V1.0 web application from scratch. This installer can be integrated into an existing system to manually install your project or system. 
