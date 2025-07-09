@@ -32,18 +32,13 @@ installer/
 └── index.php
 
 ⚙️ Create Configuration File
+    cp .env.example .env
 
-Run the following command to create your .env file:
-cp .env.example .env
+🔑 Generate Application Key
+    php artisan key:generate
 
-
-Generate Application Key:
-
-php artisan key:generate
-
-Run the Application
-
-php artisan serve
+🚀 Run the Application
+   php artisan serve
 
 Default URL: http://localhost:8000
 
