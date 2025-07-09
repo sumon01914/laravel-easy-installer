@@ -34,9 +34,8 @@ installer/
 ⚙️ Create Configuration File
 
 Run the following command to create your .env file:
-
-
 cp .env.example .env
+
 
 Generate Application Key:
 
