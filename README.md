@@ -35,7 +35,14 @@ installer/
 
 cp .env.example .env
 
-**Generate Application Key**
+Generate Application Key:
+php artisan key:generate
+
+Run the Application
+
+php artisan serve
+
+Default URL: http://localhost:8000
 
 
 
