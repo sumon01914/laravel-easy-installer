@@ -14,19 +14,24 @@ To install this installer , installation environment should meet following requi
 | Package Manager      | Composer | Recommended version 2.x                        |
 | Ports                | 80 / 443 | Must be open in the server firewall            |
 
-**Copy Source Files**
-1. Place source in: C:/xampp/htdocs/installer
-2. Unzip and ensure contents are directly inside the installer/ directory:
+### 📁 Copy Source Files
 
+Place source in: `C:/xampp/htdocs/installer`
+
+Unzip and ensure contents are directly inside the `installer/` directory:
+
+```text
 installer/
- ├── app/
- ├── bootstrap/
- ├── config/
- ├── public/
- ├── routes/
- ├── .env
- ├── composer.json
- └── index.php
+├── app/
+├── bootstrap/
+├── config/
+├── public/
+├── routes/
+├── vendor/
+├── .env
+├── composer.json
+└── index.php
+
 
 
 
