@@ -4,4 +4,15 @@ This document covers all aspects of the installation, including the software req
 
 **Requirements**
 
+To install this installer , installation environment should meet following requirements:
+
+| Resource Type        | Name     | Version / Notes                                |
+| -------------------- | -------- | ---------------------------------------------- |
+| Web Server           | Apache   | Minimum version 2.4                            |
+| Database             | MySQL    | Minimum version 8.0                            |
+| Server-side Language | PHP      | PHP 8.1+ with `mysqli`, `pdo_mysql` extensions |
+| Package Manager      | Composer | Recommended version 2.x                        |
+| Ports                | 80 / 443 | Must be open in the server firewall            |
+
+
 
